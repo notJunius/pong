@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, random
 
 def ball_function():
     # moving the ball
@@ -8,9 +8,28 @@ def ball_function():
     if ball.top <= 0 or ball.bottom >= SCREEN_HEIGHT:
         ball_speed_y *= -1
     if ball.left <= 0 or ball.right >= SCREEN_WIDTH:
-        ball_speed_x *= -1
+        ball_restart()
     if ball.colliderect(player) or ball.colliderect(opponent):
         ball_speed_x *= -1
+
+def player_animation():
+    player.y += player_speed
+    if player.top <= 0:
+        player.top = 0
+    if player.bottom >= SCREEN_HEIGHT:
+        player.bottom = SCREEN_HEIGHT
+
+def opponent_animation():
+    if opponent.top < ball.y:
+        opponent.top += opp_speed
+    if opponent.bottom > ball.y:
+        opponent.top -= opp_speed
+
+def ball_restart():
+    global ball_speed_x, ball_speed_y
+    ball.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    ball_speed_y *= random.choice((1, -1))
+    ball_speed_x *= random.choice((1, -1))
 
 
 
@@ -40,6 +59,7 @@ white_color = (230, 232, 223)
 ball_speed_x = 7
 ball_speed_y = 7
 player_speed = 0
+opp_speed = 7
 
 while True:
     #handling input
@@ -59,7 +79,8 @@ while True:
                 player_speed += 7
 
     ball_function()
-    player.y += player_speed
+    player_animation()
+    opponent_animation()
 
     # visuals
     screen.fill(bg_color)
